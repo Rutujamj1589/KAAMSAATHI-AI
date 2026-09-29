@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KaamSaathi AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            🦺 KaamSaathi AI
+        </div>
+
+        <div class="tagline">
+            Your Safety. Your Language. Your Understanding.
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <section class="hero">
+            <h1>Understand Safety. Work Safely.</h1>
+
+            <p>
+                Get workplace safety instructions explained
+                in simple Indian languages.
+            </p>
+        </section>
+
+
+        <section class="instruction-box">
+
+            <h2>Enter a Safety Instruction</h2>
+
+            <p class="small-text">
+                Paste a workplace safety instruction below.
+            </p>
+
+            <textarea
+                id="instructionInput"
+                placeholder="Example: Always wear a helmet and safety gloves while operating the machine."
+            ></textarea>
+
+
+            <div class="language-section">
+
+                <label for="language">
+                    Choose your language:
+                </label>
+
+                <select id="language">
+                    <option value="marathi">Marathi</option>
+                    <option value="hindi">Hindi</option>
+                </select>
+
+            </div>
+
+
+            <button id="explainButton">
+                Explain Safety Instruction
+            </button>
+
+        </section>
+
+
+        <section class="result-box" id="resultBox">
+
+            <h2>🛡️ KaamSaathi Explanation</h2>
+
+            <p id="resultText">
+                Your simple safety explanation will appear here.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>KaamSaathi AI • AI for Bharat in Indian Languages</p>
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
