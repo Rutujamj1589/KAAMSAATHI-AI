@@ -48,6 +48,16 @@ class SafetyRequest(BaseModel):
     instruction: str
     language: str
 
+class QuestionRequest(BaseModel):
+    instruction: str
+    language: str
+
+class AnswerRequest(BaseModel):
+    instruction: str
+    question: str
+    answer: str
+    language: str
+
 
 @app.get("/")
 def home():
@@ -112,3 +122,118 @@ Safety instruction:
             status_code=500,
             detail=str(error)
         )
+
+@app.post("/question")
+def generate_question(request: QuestionRequest):
+
+    language_name = {
+        "marathi": "Marathi",
+        "hindi": "Hindi"
+    }.get(request.language.lower(), "Marathi")
+
+    # Safe fallback question for demo reliability
+    fallback_questions = {
+        "Marathi": "मशीन चालवताना तुम्ही कोणती सुरक्षा साधने वापरली पाहिजेत?",
+        "Hindi": "मशीन चलाते समय आपको कौन से सुरक्षा उपकरण पहनने चाहिए?"
+    }
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-3.8-flash",
+            contents=f"""
+You are KaamSaathi AI, a workplace safety coach.
+
+Create ONE very simple teach-back question in {language_name}.
+
+The question must check whether the worker understood
+the most important safety action.
+
+Do not ask a multiple-choice question.
+Ask the worker to explain in their own words.
+
+Safety instruction:
+{request.instruction}
+
+Return only the question.
+"""
+        )
+
+        return {
+            "success": True,
+            "source": "ai",
+            "question": response.text
+        }
+
+    except Exception:
+        # Gemini temporarily unavailable → safe fallback
+        return {
+            "success": True,
+            "source": "fallback",
+            "question": fallback_questions[language_name]
+        }
+
+
+@app.post("/verify-answer")
+def verify_answer(request: AnswerRequest):
+
+    language_name = {
+        "marathi": "Marathi",
+        "hindi": "Hindi"
+    }.get(request.language.lower(), "Marathi")
+
+    prompt = f"""
+You are KaamSaathi AI, a workplace safety coach.
+
+Evaluate whether the worker understood the safety instruction.
+
+Safety instruction:
+{request.instruction}
+
+Question asked:
+{request.question}
+
+Worker's answer:
+{request.answer}
+
+Respond ONLY in this format:
+
+STATUS: UNDERSTOOD
+FEEDBACK: <short feedback in {language_name}>
+
+OR
+
+STATUS: NEEDS_RETRAINING
+FEEDBACK: <short explanation of what the worker missed in {language_name}>
+
+Rules:
+- Focus only on the important safety action.
+- Accept answers that express the correct meaning even if wording is different.
+- Do not invent additional safety rules.
+- Keep feedback simple.
+"""
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-3.8-flash",
+            contents=prompt
+        )
+
+        result = response.text
+
+        if "STATUS: UNDERSTOOD" in result:
+            status = "understood"
+        else:
+            status = "needs_retraining"
+
+        return {
+            "success": True,
+            "status": status,
+            "feedback": result
+        }
+
+    except Exception:
+        return {
+            "success": True,
+            "status": "needs_retraining",
+            "feedback": "कृपया सुरक्षा सूचना पुन्हा समजून घ्या आणि पुन्हा उत्तर द्या."
+        }
