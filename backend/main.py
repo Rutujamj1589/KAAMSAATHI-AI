@@ -12,24 +12,36 @@
 
 
 import os
+import time
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from openai import OpenAI
+from google import genai
 
 
 # Load variables from .env
 load_dotenv()
 
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("GEMINI_API_KEY")
 
 if not api_key:
-    raise RuntimeError("OPENAI_API_KEY is missing from .env")
+    raise RuntimeError("GEMINI_API_KEY is missing from .env")
 
-client = OpenAI(api_key=api_key)
+client = genai.Client(api_key=api_key)
 
 app = FastAPI(title="KaamSaathi AI")
+
+
+# Allow frontend to communicate with backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class SafetyRequest(BaseModel):
@@ -69,21 +81,34 @@ Rules:
 Safety instruction:
 {request.instruction}
 """
-
     try:
-        response = client.responses.create(
-            model="gpt-5.6-luna",
-            input=prompt
-        )
+        max_retries = 3
 
-        return {
-            "success": True,
-            "language": language_name,
-            "explanation": response.output_text
-        }
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content(
+                    model="gemini-3.8-flash",
+                    contents=prompt
+                )
 
-    except Exception as e:
+                return {
+                    "success": True,
+                    "language": language_name,
+                    "explanation": response.text
+                }
+
+            except Exception as error:
+                error_message = str(error)
+
+                if "503" in error_message and attempt < max_retries - 1:
+                    wait_time = 3 * (2 ** attempt)
+                    time.sleep(wait_time)
+                    continue
+
+                raise error
+
+    except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=str(e)
+            detail=str(error)
         )
