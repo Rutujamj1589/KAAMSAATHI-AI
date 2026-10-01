@@ -103,9 +103,68 @@
                 </button>
             </div>
 
-            <div id="verificationBox" class="verification-box">
+            <div id="verificationBox" class="verification-box" style="display: none;">
                 <p id="verificationText"></p>
+
+                <div id="retrainingBox" style="display: none;">
+
+                    <h3>🔄 Let's Learn It Again</h3>
+
+                    <p id="retrainingText"></p>
+
+                    <button id="retrainButton">
+                        Explain Again
+                    </button>
+
+                    <button id="retryButton" style="display: none;">
+                        Try Again
+                    </button>
+
+                </div>
             </div>
+        </section>
+
+
+                <!-- ==========================================
+             UNDERSTANDING DASHBOARD
+        =========================================== -->
+
+        <section class="dashboard-box">
+
+            <h2>📊 Understanding Dashboard</h2>
+
+            <p class="small-text">
+                Track your safety learning progress.
+            </p>
+
+            <div class="dashboard-grid">
+
+                <div class="dashboard-card">
+                    <h3>📚 Topics Checked</h3>
+                    <p id="topicsChecked">0</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>🔄 Re-training</h3>
+                    <p id="retrainingCount">0</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>✅ Verified</h3>
+                    <p id="verifiedCount">0</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>🎯 Current Status</h3>
+                    <p id="currentStatus">Not Started</p>
+                </div>
+
+            </div>
+
+            <div class="dashboard-message" id="dashboardMessage">
+                Start a safety lesson to see your progress.
+            </div>
+
         </section>
 
     </main>

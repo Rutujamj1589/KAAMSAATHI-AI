@@ -156,3 +156,75 @@ footer {
     color: #666;
     font-size: 14px;
 }
+
+
+
+
+/* ==========================================
+   UNDERSTANDING DASHBOARD
+========================================== */
+
+.dashboard-box {
+    margin-top: 30px;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-box h2 {
+    margin-bottom: 8px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.dashboard-card {
+    padding: 18px;
+    background: #f5faf7;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #e1eee5;
+}
+
+.dashboard-card h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.dashboard-card p {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.dashboard-message {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f5faf7;
+    border-radius: 10px;
+    text-align: center;
+}
+
+
+/* Responsive dashboard */
+
+@media (max-width: 800px) {
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

@@ -237,3 +237,56 @@ Rules:
             "status": "needs_retraining",
             "feedback": "कृपया सुरक्षा सूचना पुन्हा समजून घ्या आणि पुन्हा उत्तर द्या."
         }
+
+
+
+@app.post("/retrain")
+def retrain_safety(request: SafetyRequest):
+
+    language_name = {
+        "marathi": "Marathi",
+        "hindi": "Hindi"
+    }.get(request.language.lower(), "Marathi")
+
+    fallback_explanations = {
+        "Marathi": "मशीन चालवताना नेहमी हेल्मेट आणि सेफ्टी हातमोजे घाला. ही सुरक्षा साधने वापरणे महत्त्वाचे आहे.",
+        "Hindi": "मशीन चलाते समय हमेशा हेलमेट और सेफ्टी दस्ताने पहनें। इन सुरक्षा उपकरणों का उपयोग करना जरूरी है."
+    }
+
+    prompt = f"""
+You are KaamSaathi AI, a workplace safety coach.
+
+The worker did not fully understand the safety instruction.
+
+Explain the instruction again in very simple {language_name}.
+
+Safety instruction:
+{request.instruction}
+
+Rules:
+- Use simpler words than before.
+- Focus only on the most important safety action.
+- Do not add new safety rules.
+- Keep the explanation short.
+"""
+
+    try:
+
+        response = client.models.generate_content(
+            model="gemini-3.8-flash",
+            contents=prompt
+        )
+
+        return {
+            "success": True,
+            "source": "ai",
+            "explanation": response.text
+        }
+
+    except Exception:
+
+        return {
+            "success": True,
+            "source": "fallback",
+            "explanation": fallback_explanations[language_name]
+        }
