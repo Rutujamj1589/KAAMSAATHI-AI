@@ -72,7 +72,7 @@ analyzeImageButton.addEventListener("click", async function () {
 
 
         const response = await fetch(
-            "http://127.0.0.1:8000/analyze-image",
+            "https://kaamsaathi-ai-backend.onrender.com/analyze-image",
             {
                 method: "POST",
 
@@ -186,7 +186,7 @@ explainButton.addEventListener("click", async function () {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:8000/explain",
+            "https://kaamsaathi-ai-backend.onrender.com/explain",
             {
                 method: "POST",
                 headers: {
@@ -250,7 +250,7 @@ checkButton.addEventListener("click", async function () {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:8000/question",
+            "https://kaamsaathi-ai-backend.onrender.com/question",
             {
                 method: "POST",
                 headers: {
@@ -313,7 +313,7 @@ submitAnswerButton.addEventListener("click", async function () {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:8000/verify-answer",
+            "https://kaamsaathi-ai-backend.onrender.com/verify-answer",
             {
                 method: "POST",
                 headers: {
@@ -425,7 +425,7 @@ retrainButton.addEventListener("click", async function () {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:8000/retrain",
+            "https://kaamsaathi-ai-backend.onrender.com/retrain",
             {
                 method: "POST",
                 headers: {
@@ -486,7 +486,7 @@ retryButton.addEventListener("click", async function () {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:8000/question",
+            "https://kaamsaathi-ai-backend.onrender.com/question",
             {
                 method: "POST",
                 headers: {
