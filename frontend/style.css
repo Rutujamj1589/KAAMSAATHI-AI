@@ -228,3 +228,21 @@ footer {
     }
 
 }
+
+
+
+
+/* ==========================================
+   SAFETY IMAGE PREVIEW
+========================================== */
+
+.image-preview {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    max-height: 400px;
+    object-fit: contain;
+    margin: 15px auto;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}

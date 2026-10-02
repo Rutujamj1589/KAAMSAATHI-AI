@@ -47,6 +47,46 @@
                 placeholder="Example: Always wear a helmet and safety gloves while operating the machine."
             ></textarea>
 
+            <div class="voice-controls">
+
+                <button id="voiceInputButton" type="button">
+                    🎤 Speak Instruction
+                </button>
+
+                <button id="speakResultButton" type="button">
+                    🔊 Listen to Explanation
+                </button>
+
+            </div>
+
+            <div class="photo-upload">
+
+                <label for="imageInput">
+                    📸 Upload Safety Poster / Instruction
+                </label>
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                >
+
+                <p class="small-text">
+                    Upload a photo of a workplace safety instruction.
+                </p>
+
+                <img
+                    id="imagePreview"
+                    class="image-preview"
+                    style="display: none;"
+                    alt="Safety instruction preview"
+                >
+
+                <button id="analyzeImageButton" type="button">
+                    🔍 Analyze Safety Poster
+                </button>
+
+            </div>
 
             <div class="language-section">
 

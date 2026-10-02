@@ -19,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 
 # Load variables from .env
@@ -56,6 +57,11 @@ class AnswerRequest(BaseModel):
     instruction: str
     question: str
     answer: str
+    language: str
+
+class ImageRequest(BaseModel):
+    image_base64: str
+    mime_type: str
     language: str
 
 
@@ -288,5 +294,115 @@ Rules:
         return {
             "success": True,
             "source": "fallback",
+            "explanation": fallback_explanations[language_name]
+        }
+
+
+# ==========================================
+# 6. ANALYZE SAFETY POSTER IMAGE
+# ==========================================
+
+@app.post("/analyze-image")
+def analyze_image(request: ImageRequest):
+
+    language_name = {
+        "marathi": "Marathi",
+        "hindi": "Hindi"
+    }.get(request.language.lower(), "Marathi")
+
+    fallback_explanations = {
+        "Marathi": (
+            "या सुरक्षा पोस्टरमध्ये मशीन चालवताना "
+            "हेल्मेट आणि सेफ्टी हातमोजे वापरण्याची सूचना आहे."
+        ),
+        "Hindi": (
+            "इस सुरक्षा पोस्टर में मशीन चलाते समय "
+            "हेलमेट और सेफ्टी दस्ताने पहनने की सलाह दी गई है।"
+        )
+    }
+
+    prompt = f"""
+You are KaamSaathi AI, a workplace safety coach.
+
+Analyze this workplace safety poster or instruction image.
+
+Explain the important safety instruction in very simple
+{language_name} for an Indian worker.
+
+Rules:
+- Read the visible text and safety symbols carefully.
+- Explain only what is clearly present in the image.
+- Do not invent additional safety rules.
+- Clearly mention the main action the worker should take.
+- Use simple everyday language.
+- Keep the explanation short and easy to understand.
+
+Return only the explanation in {language_name}.
+"""
+
+    try:
+
+        image_bytes = __import__("base64").b64decode(
+            request.image_base64
+        )
+
+        max_retries = 3
+
+        for attempt in range(max_retries):
+
+            try:
+
+                response = client.models.generate_content(
+                    model="gemini-3.8-flash",
+                    contents=[
+                        prompt,
+                        types.Part.from_bytes(
+                            data=image_bytes,
+                            mime_type=request.mime_type
+                        )
+                    ]
+                )
+
+                return {
+                    "success": True,
+                    "source": "ai",
+                    "language": language_name,
+                    "explanation": response.text
+                }
+
+            except Exception as error:
+
+                error_message = str(error)
+
+                print(
+                    f"Image analysis attempt {attempt + 1} failed: "
+                    f"{error_message}"
+                )
+
+                if (
+                    "503" in error_message
+                    and attempt < max_retries - 1
+                ):
+                    wait_time = 3 * (2 ** attempt)
+
+                    print(
+                        f"Gemini is busy. Retrying in "
+                        f"{wait_time} seconds..."
+                    )
+
+                    time.sleep(wait_time)
+
+                    continue
+
+                raise error
+
+    except Exception as error:
+
+        print("Image analysis final error:", error)
+
+        return {
+            "success": True,
+            "source": "fallback",
+            "language": language_name,
             "explanation": fallback_explanations[language_name]
         }
