@@ -246,3 +246,11 @@ footer {
     border-radius: 12px;
     border: 1px solid #ddd;
 }
+
+.voice-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
